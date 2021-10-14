@@ -1,5 +1,6 @@
-Welcome to Carbon Black container security repo
-**This is a sample demo for carbon black container security**
+**Welcome to Carbon Black container security repo**
+
+This is a sample demo for carbon black container security
 1. make sure you have access to your cluster and its onboarded to carbon black container security
 2. run the file demo-app-install.sh
 3. the installation file will install:
