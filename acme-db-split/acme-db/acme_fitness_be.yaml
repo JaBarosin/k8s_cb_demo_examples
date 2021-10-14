@@ -1,0 +1,336 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: cart
+  labels:
+    app: cart
+    service: cart
+spec:
+  ports:
+    - name: http-cart
+      protocol: TCP
+      port: 5000
+  selector:
+    app: cart
+    service: cart
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: cart
+  labels:
+    app: cart
+    service: cart
+spec:
+  selector:
+    matchLabels:
+      app: cart
+      service: cart
+  strategy:
+    type: Recreate
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        app: cart
+        service: cart
+    spec:
+      volumes:
+      - name: cart-data
+        emptyDir: {}
+      containers:
+      - image: gcr.io/vmwarecloudadvocacy/acmeshop-cart:1.0.0
+        name: cart
+        env:
+        - name: REDIS_HOST
+          value: 'cart-redis.acme-db'
+        - name: REDIS_PASS
+          valueFrom:
+            secretKeyRef:
+              name: redis-pass
+              key: password
+        - name: REDIS_PORT
+          value: '6379'
+        - name: CART_PORT
+          value: '5000'
+        ports:
+        - containerPort: 5000
+          name: http-cart
+        volumeMounts:
+        - mountPath: "/data"
+          name: "cart-data"
+        resources:
+          requests:
+            memory: "64Mi"
+            cpu: "100m"
+          limits:
+            memory: "256Mi"
+            cpu: "500m"
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: catalog
+  labels:
+    app: catalog
+    service: catalog
+spec:
+  ports:
+    - name: http-catalog
+      protocol: TCP
+      port: 8082
+  selector:
+    app: catalog
+    service: catalog
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: catalog
+  labels:
+    app: catalog
+    service: catalog
+    version: v1
+spec:
+  selector:
+    matchLabels:
+      app: catalog
+      service: catalog
+      version: v1
+  strategy:
+    type: Recreate
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        app: catalog
+        service: catalog
+        version: v1
+    spec:
+      volumes:
+      - name: catalog-data
+        emptyDir: {}
+      containers:
+      - image: gcr.io/vmwarecloudadvocacy/acmeshop-catalog:rel1
+        name: catalog
+        env:
+        - name: CATALOG_DB_HOST
+          value: 'catalog-mongo.acme-db'
+        - name: CATALOG_DB_PASSWORD
+          valueFrom:
+            secretKeyRef:
+              name: catalog-mongo-pass
+              key: password
+        - name: CATALOG_DB_PORT
+          value: '27017'
+        - name: CATALOG_DB_USERNAME
+          value: 'mongoadmin'
+        - name: CATALOG_PORT
+          value: '8082'
+        ports:
+        - containerPort: 8082
+          name: http-catalog
+        volumeMounts:
+        - mountPath: "/data"
+          name: "catalog-data"
+        resources:
+          requests:
+            memory: "64Mi"
+            cpu: "100m"
+          limits:
+            memory: "256Mi"
+            cpu: "500m"
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: order
+  labels:
+    app: order
+    service: order
+spec:
+  ports:
+    - name: http-order
+      protocol: TCP
+      port: 6000
+  selector:
+    app: order
+    service: order
+---
+apiVersion: apps/v1 # for versions before 1.8.0 use apps/v1beta1
+kind: Deployment
+metadata:
+  name: order
+  labels:
+    app: order
+    service: order
+spec:
+  selector:
+    matchLabels:
+      app: order
+      service: order
+  strategy:
+    type: Recreate
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        app: order
+        service: order
+    spec:
+      volumes:
+      - name: order-data
+        emptyDir: {}
+      containers:
+      - image: gcr.io/vmwarecloudadvocacy/acmeshop-order:1.0.1
+        name: order
+        env:
+        - name: ORDER_DB_HOST
+          value: 'order-mongo.acme-db'
+        - name: ORDER_DB_PASSWORD
+          valueFrom:
+            secretKeyRef:
+              name: order-mongo-pass
+              key: password
+        - name: ORDER_DB_PORT
+          value: '27017'
+        - name: ORDER_DB_USERNAME
+          value: 'mongoadmin'
+        - name: ORDER_PORT
+          value: '6000'
+        - name: PAYMENT_PORT
+          value: '9000'
+        - name: PAYMENT_HOST
+          value: 'payment'
+        ports:
+        - containerPort: 6000
+          name: http-order
+        volumeMounts:
+        - mountPath: "/data"
+          name: "order-data"
+        resources:
+          requests:
+            memory: "64Mi"
+            cpu: "100m"
+          limits:
+            memory: "256Mi"
+            cpu: "500m"
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: payment
+  labels:
+    app: payment
+    service: payment
+spec:
+  ports:
+    - name: http-payment
+      protocol: TCP
+      port: 9000
+  selector:
+    app: payment
+    service: payment
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: payment
+  labels:
+    app: payment
+    service: payment
+spec:
+  selector:
+    matchLabels:
+      app: payment
+      service: payment
+  strategy:
+    type: Recreate
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        app: payment
+        service: payment
+    spec:
+      containers:
+      - image: gcr.io/vmwarecloudadvocacy/acmeshop-payment:1.0.0
+        name: payment
+        env:
+        - name: PAYMENT_PORT
+          value: '9000'
+        ports:
+        - containerPort: 9000
+          name: http-payment
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: users
+  labels:
+    app: users
+    service: users
+spec:
+  ports:
+    - name: http-users
+      protocol: TCP
+      port: 8081
+  selector:
+    app: users
+    service: users
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: users
+  labels:
+    app: users
+    service: users
+spec:
+  selector:
+    matchLabels:
+      app: users
+      service: users
+  strategy:
+    type: Recreate
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        app: users
+        service: users
+    spec:
+      volumes:
+      - name: users-data
+        emptyDir: {}
+      containers:
+      - image: gcr.io/vmwarecloudadvocacy/acmeshop-user:1.0.0
+        name: users
+        env:
+        - name: USERS_DB_HOST
+          value: 'users-mongo.acme-be'
+        - name: USERS_DB_PASSWORD
+          valueFrom:
+            secretKeyRef:
+              name: users-mongo-pass
+              key: password
+        - name: USERS_DB_PORT
+          value: '27017'
+        - name: USERS_DB_USERNAME
+          value: 'mongoadmin'
+        - name: USERS_PORT
+          value: '8081'
+        ports:
+        - containerPort: 8081
+          name: http-users
+        volumeMounts:
+        - mountPath: "/data"
+          name: "users-data"
+        resources:
+          requests:
+            memory: "64Mi"
+            cpu: "100m"
+          limits:
+            memory: "256Mi"
+            cpu: "500m"
+---
