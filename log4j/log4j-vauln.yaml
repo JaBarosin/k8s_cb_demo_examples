@@ -1,0 +1,32 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: log4j-vulnerable
+  namespace: log4j-vuln-demo
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: log4shell-web
+  template:
+    metadata:
+      labels:
+        app: log4shell-web
+    spec:
+      containers:
+      - name: log4j-webapp
+        image: vmda5hes/pocs:log4j-webapp
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: log4j-exposer-srv
+  namespace: log4j-vuln-demo
+spec:
+  type: LoadBalancer
+  selector:
+    app: log4shell-web
+  ports:
+  - nodePort: 8080
+    port: 8080
+    targetPort: 8080
