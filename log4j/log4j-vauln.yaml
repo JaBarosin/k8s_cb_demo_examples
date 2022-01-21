@@ -1,8 +1,15 @@
+kind: Namespace
+apiVersion: v1
+metadata:
+  name: log4j
+  labels:
+    name: log4j-vulnerable
+---
 apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: log4j-vulnerable
-  namespace: log4j-vuln-demo
+  namespace: log4j
 spec:
   replicas: 1
   selector:
@@ -15,18 +22,16 @@ spec:
     spec:
       containers:
       - name: log4j-webapp
-        image: vmda5hes/pocs:log4j-webapp
+        image: tamirmich/log4j2-demo:0.0.3
 ---
 apiVersion: v1
 kind: Service
 metadata:
   name: log4j-exposer-srv
-  namespace: log4j-vuln-demo
+  namespace: log4j
 spec:
   type: LoadBalancer
   selector:
     app: log4shell-web
   ports:
-  - nodePort: 8080
-    port: 8080
-    targetPort: 8080
+  - port: 8080
