@@ -1,4 +1,4 @@
-echo "Install ACME-Fit, Sock-Shop and Boutique apps on Kubernetes cluster"
+echo "Install ACME-Fit, Sock-Shop,Boutique and log4j sample apps on your Kubernetes cluster"
 kubectl create ns acme-fe
 kubectl create ns acme-be
 kubectl create -f acme-fe-be-split/acme-fe -n acme-fe
