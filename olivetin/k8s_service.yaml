@@ -1,0 +1,14 @@
+# This creates the K8s Service
+apiVersion: v1
+kind: Service
+metadata:
+  name: olivetin
+  labels:
+    app: olivetin
+spec:
+  ports:
+    # the port that this service should serve on
+    - port: 1337
+  selector:
+    app: olivetin
+  type: LoadBalancer
