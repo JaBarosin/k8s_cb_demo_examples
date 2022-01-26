@@ -1,5 +1,5 @@
-echo reload configmap for Olivetin
-kubectl delete -f deploy/k8s_configmap.yml -n olivetin
-kubectl create -f deploy/k8s_configmap.yml -n olivetin
-kubectl delete pod --all -n olivetin
-kubectl get pod -n olivetin
+echo reload configmap for NetDemo
+kubectl delete -f deploy/k8s_configmap.yml -n netdemo
+kubectl create -f deploy/k8s_configmap.yml -n netdemo
+kubectl delete pod --all -n netdemo
+kubectl get pod -n netdemo

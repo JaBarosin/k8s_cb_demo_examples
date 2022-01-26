@@ -1,24 +1,45 @@
 apiVersion: v1
 kind: ConfigMap
 metadata:
-  name: olivetin-config
+  name: netdemo-configmap
 data:
   config.yaml: |
     actions:
-      - title: "Hello world!"
-        shell: echo 'Hello World!'
-      
-      - title: ping google.com
-        shell: ping 8.8.8.8 -c 10
+      - title: Ping to Host
+        shell: ping {{ host }} -c 5
         icon: ping
-        timeout: 3
-      
-      - title: Ping host
-        shell: ping {{ host }} -c {{ count }}
-        icon: ping
+        timeout: 30
         arguments:
         - name: host
           title: host
           type: ascii_identifier
           default: google.com
-      
+      - title: Ping to IP
+        shell: ping {{ host }} -c 5
+        icon: ping
+        timeout: 30
+        arguments:
+        - name: host
+          title: IP
+          type: ascii_identifier
+          default: 8.8.8.8 
+      - title: Curl to host
+        shell: curl {{ host }} -c 5
+        icon: "&#127757;"
+        arguments:
+        - name: host
+          title: curl
+          type: ascii_identifier
+          default: google.com
+      - title: Port scan externally
+        shell: nmap -sT -T5 -n -p80,443 -iR 100
+        icon: "&#128520;"
+        timeout: 60
+      - title: Port scan internally
+        shell: nmap -sT -T5 -n -p80,443 `ip a sh | grep inet | grep -v 127 | cut -d" " -f 6 | cut -d"/" -f 1 | grep -v ::`/24
+        icon: "&#128520;"
+        timeout: 60
+      - title: Connect to malicious destination
+        shell: curl https://www.eurofinchain.com
+        icon: "&#9940;"
+        timeout: 30 
