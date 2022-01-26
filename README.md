@@ -7,4 +7,6 @@ This is a sample demo for carbon black container security
     - ACME-Fitness app devided to FE and BE in two different namespaces
     - Sock-Shop demo app in sock-shop namespace
     - Boutique demo app in boutiqe namespace
+    - Log4J sample app
+    - Networking demo app that will allow you to create network actions
 

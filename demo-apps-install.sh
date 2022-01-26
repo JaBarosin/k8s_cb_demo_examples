@@ -8,3 +8,4 @@ kubectl create -f boutique/release/kubernetes-manifests.yaml -n boutique
 kubectl create ns sock-shop
 kubectl create -f sock-shop/deploy/kubernetes/complete-demo.yaml -n sock-shop
 kubectl create -f log4j/log4j-vauln.yaml
+./netdemo/deploy.sh
