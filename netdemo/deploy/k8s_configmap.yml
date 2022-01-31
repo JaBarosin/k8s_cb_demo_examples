@@ -5,24 +5,6 @@ metadata:
 data:
   config.yaml: |
     actions:
-      - title: Ping to Host
-        shell: ping {{ host }} -c 5
-        icon: ping
-        timeout: 30
-        arguments:
-        - name: host
-          title: host
-          type: ascii_identifier
-          default: google.com
-      - title: Ping to IP
-        shell: ping {{ host }} -c 5
-        icon: ping
-        timeout: 30
-        arguments:
-        - name: host
-          title: IP
-          type: ascii_identifier
-          default: 8.8.8.8 
       - title: Curl to host
         shell: curl {{ host }} -c 5
         icon: "&#127757;"
