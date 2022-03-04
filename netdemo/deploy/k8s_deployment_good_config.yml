@@ -1,0 +1,46 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata: 
+    name: netdemo
+spec: 
+  replicas: 1
+  selector: 
+    matchLabels:
+      app: netdemo
+  template:
+    metadata:
+      labels:
+        app: netdemo
+    spec:
+      securityContext:
+        runAsUser: 0
+      containers: 
+        - name: netdemo
+          image: docker.io/openso/olivetin:latest
+          ports:
+            - containerPort: 1337
+          volumeMounts:
+            - name: netdemo-configmap
+              mountPath: "/config"
+              readOnly: true
+          securityContext:
+            privileged: false
+          resources:
+            limits:
+              cpu: "1"
+              memory: "128Mi"
+            requests:
+              cpu: "0.5"
+              memory: "64Mi"
+          livenessProbe:
+            exec:
+              command: 
+                - curl 
+                - localhost:1337
+            initialDelaySeconds: 5
+            periodSeconds: 30
+
+      volumes:
+        - name: netdemo-configmap
+          configMap: 
+            name: netdemo-configmap

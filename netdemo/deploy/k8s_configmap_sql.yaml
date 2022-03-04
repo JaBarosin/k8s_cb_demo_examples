@@ -24,4 +24,13 @@ data:
       - title: Connect to malicious destination
         shell: curl http://112.17.28.39
         icon: "&#9940;"
-        timeout: 30 
+        timeout: 30
+      - title: SQL injection
+        shell: curl {{ host }}
+        icon: "&#127875;"
+        arguments:
+        - name: host
+          title: SQL injection
+          type: very_dangerous_raw_string
+          default: insert sql injection here
+      
